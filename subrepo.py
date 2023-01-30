@@ -10,7 +10,7 @@ DEFAULT_JSONFILE = 'subrepos.json'
 
 # Expected schema for subrepos.json
 # see https://json-schema.org/learn/getting-started-step-by-step to edit it
-json_schema = {
+JSON_SCHEMA = {
     'title': 'subrepos.json',
     'type': 'object',
     'properties': {
@@ -62,7 +62,7 @@ def open_json(file_path):
         print(f'ERROR: File {file_path} is not a valid json ({e})')
 
     try:
-        jsonschema.validate(instance=data, schema=json_schema)
+        jsonschema.validate(instance=data, schema=JSON_SCHEMA)
     except jsonschema.exceptions.ValidationError as e:
         print(f'ERROR: File {file_path} format is invalid: {e.message}')
 
@@ -117,10 +117,10 @@ def main():
 
     base_dir = os.path.realpath(os.path.dirname(__file__))
 
-    data = open_json(jsonfile)
-    subrepo_list = parse_subrepo_data(data)
-
     if update:
+        print(f'parsing {jsonfile} ...')
+        data = open_json(jsonfile)
+        subrepo_list = parse_subrepo_data(data)
         print('fetching all subrepos ...')
         fetch_all(base_dir, subrepo_list)
 
