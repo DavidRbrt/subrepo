@@ -4,9 +4,9 @@ import argparse
 import os
 import pathlib
 import json
-from collections import OrderedDict
 import jsonschema
 
+DEFAULT_JSONFILE = 'subrepos.json'
 
 # Expected schema for subrepos.json
 # see https://json-schema.org/learn/getting-started-step-by-step to edit it
@@ -102,21 +102,22 @@ def fetch_all(base_dir, subrepo_list):
 
 
 def command_line_parser():
-	parser = argparse.ArgumentParser(description='subrepo')
+    parser = argparse.ArgumentParser(description='subrepo')
 
-	parser.add_argument('-u', '--update', required=False, default=False, action='store_true', help='fetch all subrepos')
+    parser.add_argument('-u', '--update', help='fetch all subrepos', required=False, default=False, action='store_true')
+    parser.add_argument('-j', '--jsonfile', help='json input file', required=False , type=str, default=DEFAULT_JSONFILE)
 
-	args, _ = parser.parse_known_args()
+    args, _ = parser.parse_known_args()
 
-	return args.update
+    return args.update, args.jsonfile
 
 
 def main():
-    update = command_line_parser()
+    update, jsonfile = command_line_parser()
 
     base_dir = os.path.realpath(os.path.dirname(__file__))
 
-    data = open_json('subrepos.json')
+    data = open_json(jsonfile)
     subrepo_list = parse_subrepo_data(data)
 
     if update:
@@ -125,4 +126,4 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+    main()
