@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import subprocess
 import pathlib
 import json
 import jsonschema
@@ -42,6 +43,29 @@ JSON_SCHEMA = {
         'list',
     ],
 }
+
+
+class bformat:
+    # colors
+    DEFAULT   = '\033[00m'
+    RED       = '\033[31m'
+    GREEN     = '\033[32m'
+    YELLOW    = '\033[33m'
+    BLUE      = '\033[34m'
+    PURPLE    = '\033[35m'
+    CYAN      = '\033[36m'
+    BOLD      = '\033[1m'
+    UNDERLINE = '\033[4m'
+    #
+    SUCCESS = GREEN + BOLD
+    ERROR   = RED
+
+    # symbols
+    CHECKMARK = '\u2713'
+    CROSSMARK = '\u2a2f'
+    #
+    SUCCESSMARK = GREEN + CHECKMARK + DEFAULT
+    ERRORMARK = RED + CROSSMARK + DEFAULT
 
 
 class Subrepo:
@@ -93,12 +117,30 @@ def parse_subrepo_data(data):
 
 def fetch_all(base_dir, subrepo_list):
     for subrepo in subrepo_list:
+        os.chdir(base_dir)
+
+        # create local folder and go in
         pathlib.Path(subrepo.local_path).mkdir(parents=True, exist_ok=True)
         os.chdir(subrepo.local_path)
-        os.system(f'git clone {subrepo.repo_path}')
+
+        # clone project
+        result = subprocess.run(['git', 'clone', f'{subrepo.repo_path}'], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: clone {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}')
+            continue
+
+        print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: clone ({subrepo.local_path}/{subrepo.repo_name})')
+
+        # go in project folder and checkout revision
         os.chdir(subrepo.repo_name)
-        os.system(f'git checkout {subrepo.revision}')
-        os.chdir(base_dir)
+        result = subprocess.run(['git', 'checkout', f'{subrepo.revision}'], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: checkout {subrepo.revision} {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}')
+            continue
+
+        print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: checkout {subrepo.revision}')
+
+    os.chdir(base_dir)
 
 
 def command_line_parser():
@@ -118,10 +160,8 @@ def main():
     base_dir = os.path.realpath(os.path.dirname(__file__))
 
     if update:
-        print(f'parsing {jsonfile} ...')
         data = open_json(jsonfile)
         subrepo_list = parse_subrepo_data(data)
-        print('fetching all subrepos ...')
         fetch_all(base_dir, subrepo_list)
 
 
