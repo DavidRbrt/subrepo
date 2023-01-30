@@ -125,21 +125,27 @@ def fetch_all(base_dir, subrepo_list):
 
         # clone project if it doesn't exist
         if not os.path.exists(subrepo.repo_name + '/.git'):
+            # TODO: check if it is the right project
             result = subprocess.run(['git', 'clone', f'{subrepo.repo_path}'], capture_output=True, text=True)
             if result.returncode != 0:
                 print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: clone {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}')
                 continue
-
-            print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: clone ({subrepo.local_path}/{subrepo.repo_name})')
-
-        # go in project folder and checkout revision
+            print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: cloned ({subrepo.local_path}/{subrepo.repo_name})')
+        else:
+            print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: already cloned ({subrepo.local_path}/{subrepo.repo_name})')
+        
+        # go in project folder and checkout revision if there is no local changes
         os.chdir(subrepo.repo_name)
-        result = subprocess.run(['git', 'checkout', f'{subrepo.revision}'], capture_output=True, text=True)
-        if result.returncode != 0:
-            print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: checkout {subrepo.revision} {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}')
-            continue
+        result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
 
-        print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: checkout {subrepo.revision}')
+        if not result.stdout:
+            result = subprocess.run(['git', 'checkout', f'{subrepo.revision}'], capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: checkout to {subrepo.revision} {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}')
+                continue
+            print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: checked out to {subrepo.revision}')
+        else:
+            print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: checkout to {subrepo.revision} {bformat.ERROR}\nThere are local changes{bformat.DEFAULT}')
 
     os.chdir(base_dir)
 
