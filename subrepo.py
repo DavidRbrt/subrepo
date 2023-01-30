@@ -7,6 +7,7 @@ import json
 from collections import OrderedDict
 import jsonschema
 
+
 # Expected schema for subrepos.json
 # see https://json-schema.org/learn/getting-started-step-by-step to edit it
 json_schema = {
@@ -42,6 +43,7 @@ json_schema = {
     ],
 }
 
+
 class Subrepo:
     def __init__(self, repo_path, revision='master', local_path='.'):
         self.repo_path = repo_path
@@ -49,6 +51,7 @@ class Subrepo:
         self.local_path = local_path
         #
         self.repo_name = pathlib.Path(repo_path).stem
+
 
 def open_json(file_path):
     try:
@@ -66,13 +69,23 @@ def open_json(file_path):
     return data
 
 
-def parse_subrepo_list(list):
+def parse_subrepo_data(data):
     subrepo_list = []
 
-    for element in list:
+    for element in data['list']:
+
         repo_path = element['repo_path']
-        revision = element['revision']
-        local_path = element['local_path']
+
+        if 'local_path' in element:
+            local_path = element['local_path']
+        else:
+            local_path = data['default']['local_path']
+
+        if 'revision' in element:
+            revision = element['revision']
+        else:
+            revision = data['default']['revision']
+
         subrepo_list.append(Subrepo(repo_path, revision, local_path))
 
     return subrepo_list
@@ -104,9 +117,7 @@ def main():
     base_dir = os.path.realpath(os.path.dirname(__file__))
 
     data = open_json('subrepos.json')
-    subrepo_list = parse_subrepo_list(data['list'])
-
-    # TODO: use default json param
+    subrepo_list = parse_subrepo_data(data)
 
     if update:
         print('fetching all subrepos ...')
