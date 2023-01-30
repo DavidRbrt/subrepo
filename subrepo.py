@@ -123,13 +123,14 @@ def fetch_all(base_dir, subrepo_list):
         pathlib.Path(subrepo.local_path).mkdir(parents=True, exist_ok=True)
         os.chdir(subrepo.local_path)
 
-        # clone project
-        result = subprocess.run(['git', 'clone', f'{subrepo.repo_path}'], capture_output=True, text=True)
-        if result.returncode != 0:
-            print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: clone {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}')
-            continue
+        # clone project if it doesn't exist
+        if not os.path.exists(subrepo.repo_name + '/.git'):
+            result = subprocess.run(['git', 'clone', f'{subrepo.repo_path}'], capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f'[{bformat.ERRORMARK}] {subrepo.repo_name}: clone {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}')
+                continue
 
-        print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: clone ({subrepo.local_path}/{subrepo.repo_name})')
+            print(f'[{bformat.SUCCESSMARK}] {subrepo.repo_name}: clone ({subrepo.local_path}/{subrepo.repo_name})')
 
         # go in project folder and checkout revision
         os.chdir(subrepo.repo_name)
