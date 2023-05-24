@@ -6,6 +6,7 @@ import subprocess
 import pathlib
 import json
 import jsonschema
+from pathlib import Path
 
 DEFAULT_JSONFILE = 'subrepos.json'
 
@@ -169,7 +170,7 @@ def command_line_parser():
 def main():
     update, jsonfile = command_line_parser()
 
-    base_dir = os.path.realpath(os.path.dirname(__file__))
+    base_dir = os.path.dirname(Path(jsonfile).resolve())
 
     if update:
         data = open_json(jsonfile)
