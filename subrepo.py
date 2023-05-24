@@ -61,34 +61,34 @@ def parse_subrepo_data(data):
 def command_line_parser():
     parser = argparse.ArgumentParser(description='subrepo')
 
-    parser.add_argument('-j', '--jsonfile', help='json input file', required=False, type=str, default=None)
+    parser.add_argument('-d', '--dependencies-file', help='dependencies input file', required=False, type=str, default=None)
     parser.add_argument('-u', '--update', help='fetch all subrepos', required=False, default=False, action='store_true')
     parser.add_argument('-g', '--generate-version', help='generate a header version file for target language (c)', required=False, type=str, default=None)
 
     args, _ = parser.parse_known_args()
 
-    return args.jsonfile, args.update, args.generate_version
+    return args.dependencies_file, args.update, args.generate_version
 
 
 def main():
-    jsonfile, update, generate_version = command_line_parser()
+    dependencies_file, update, generate_version = command_line_parser()
 
-    if jsonfile:
-        base_dir = os.path.dirname(Path(jsonfile).resolve())
+    if dependencies_file:
+        base_dir = os.path.dirname(Path(dependencies_file).resolve())
     else:
         base_dir = os.getcwd()
 
     if update:
-        if not jsonfile:
+        if not dependencies_file:
             print("Error: you need to provides a JSON file")
             return
-        json_data = read_json(jsonfile)
+        json_data = read_json(dependencies_file)
         subrepo_list = parse_subrepo_data(json_data)
         fetch_all(base_dir, subrepo_list)
 
     if generate_version:
-        if jsonfile:
-            json_data = read_json(jsonfile)
+        if dependencies_file:
+            json_data = read_json(dependencies_file)
             subrepo_list = parse_subrepo_data(json_data)
         else:
             subrepo_list = None

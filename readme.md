@@ -10,19 +10,39 @@
 
 ## Usage
 
-Update sub repos
+Note that you can run multiple actions in a same command
+
+### Update sub repos
 
 ```bash
-$ python subrepo.py --update --jsonfile <subrepo-file>
+$ python subrepo.py --update --dependencies-file <file>
 ```
 
 or
 
 ```bash
-$ python subrepo.py -u -j <subrepo-file>
+$ python subrepo.py -u -d <dependencies-file>
 ```
 
-Example of subrepo file (json), usually called **dependencies.json**:
+### Generate version file
+
+This will generate a file directly usable in a project
+
+```bash
+$ python subrepo.py --generate-version <language> --dependencies-file <file,optional>
+```
+
+or
+
+```bash
+$ python subrepo.py -g <language> -j <file,optional>
+```
+- available languages: c
+- without providing dependencies file the version file will only contains base project infos
+
+## Dependencies file format
+
+Example of dependencies file, usually called **dependencies.json**:
 
 ```json
 {
@@ -45,6 +65,8 @@ Example of subrepo file (json), usually called **dependencies.json**:
 ```
 - revision can be a sha1, a tag or a branch
 - local_path can be any path, existing or not
+
+## Tips
 
 You can ease the use of it by creating an alias, in **~/.bashrc**:
 
