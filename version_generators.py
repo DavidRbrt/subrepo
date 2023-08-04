@@ -1,4 +1,5 @@
 class C:
+    # fmt: off
     FILENAME = "version.h"
 
     HEADER = ""\
@@ -14,12 +15,14 @@ class C:
     FOOTER = ""\
         "\n"\
         "#endif\n"
+    # fmt: on
 
     def generate_line(variable, value):
         return f'#define {variable} "{value}"\n'
 
 
 class Python:
+    # fmt: off
     FILENAME = "version.py"
 
     HEADER = ""\
@@ -31,6 +34,7 @@ class Python:
         "class Version:\n"\
 
     FOOTER = ""
+    # fmt: on
 
     def generate_line(variable, value):
         return f'    {variable} = "{value}"\n'
