@@ -1,3 +1,5 @@
+import sys
+
 # colors
 DEFAULT   = '\033[00m'
 RED       = '\033[31m'
@@ -14,7 +16,23 @@ ERROR   = RED
 
 # symbols
 CHECKMARK = '\u2713'
-CROSSMARK = '\u2a2f'
-#
+CROSSMARK = '\u2717'
+
+try:
+    # try to print special chars
+    print(f'{CHECKMARK + CROSSMARK}',)
+    # if the print was ok, go up and clear line
+    sys.stdout.write('\x1b[1A')
+    sys.stdout.write('\x1b[2K')
+except UnicodeEncodeError as e:
+    # if chars are not in the charmap, use these
+    CHECKMARK = 'OK'
+    CROSSMARK = 'X'
+
+NESTEDMARK = '> '
+
+# sequences
 SUCCESSMARK = GREEN + CHECKMARK + DEFAULT
 ERRORMARK = RED + CROSSMARK + DEFAULT
+
+    

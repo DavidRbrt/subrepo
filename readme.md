@@ -10,35 +10,43 @@
 
 ## Usage
 
-Note that you can run multiple actions in a same command
+Use help to see how to use this
 
-### Update sub repos
+```bash
+$ python subrepo.py --help
+```
+
+Plase note that:
+- you can run multiple actions in a same command
+- default dependencies file is **dependencies.json**
+
+### Usage examples 
+
+Update sub repos
 
 ```bash
 $ python subrepo.py --update --dependencies-file <file>
 ```
 
-or
-
 ```bash
-$ python subrepo.py -u -d <dependencies-file>
+$ python subrepo.py -u
 ```
 
-### Generate version file
-
-This will generate a file directly usable in a project
+Generate version file
 
 ```bash
-$ python subrepo.py --generate-version <language> --dependencies-file <file,optional>
+$ python subrepo.py --generate-version <language> --dependencies-file <file>
 ```
-
-or
 
 ```bash
-$ python subrepo.py -g <language> -j <file,optional>
+$ python subrepo.py -g <language>
 ```
-- available languages: c
-- without providing dependencies file the version file will only contains base project infos
+
+Update sub repos and nested sub repos then generate c version file
+
+```bash
+$ python subrepo.py -r -u -g c
+```
 
 ## Dependencies file format
 
