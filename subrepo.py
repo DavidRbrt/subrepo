@@ -8,17 +8,16 @@ from version_generators import get_version_generator
 from generate_version import generate_version_file
 
 
-DEFAULT_DEPENDENCIES_FILENAME = 'dependencies.json'
+DEFAULT_DEPENDENCIES_FILENAME = "dependencies.json"
 
 
 def command_line_parser():
-    parser = argparse.ArgumentParser(description='subrepo')
+    parser = argparse.ArgumentParser(description="subrepo")
 
-    parser.add_argument('-d', '--dependencies-file', help=f'dependencies input file, default={DEFAULT_DEPENDENCIES_FILENAME}',
-                            required=False, type=str, default=DEFAULT_DEPENDENCIES_FILENAME)
-    parser.add_argument('-u', '--update', help='fetch all subrepos', required=False, default=False, action='store_true')
-    parser.add_argument('-g', '--generate-version', help='generate a header version file for target language (available: c, py)', required=False, type=str, default=None)
-    parser.add_argument('-r', '--recursive', help='process dependencies too', required=False, default=False, action='store_true')
+    parser.add_argument("-d", "--dependencies-file", help=f"dependencies input file, default={DEFAULT_DEPENDENCIES_FILENAME}", required=False, type=str, default=DEFAULT_DEPENDENCIES_FILENAME)
+    parser.add_argument("-u", "--update", help="fetch all subrepos", required=False, default=False, action="store_true")
+    parser.add_argument("-g", "--generate-version", help="generate a header version file for target language (available: c, py)", required=False, type=str, default=None)
+    parser.add_argument("-r", "--recursive", help="process dependencies too", required=False, default=False, action="store_true")
 
     args, _ = parser.parse_known_args()
 
@@ -47,12 +46,12 @@ def main():
     # generate_version
     if generate_version:
         version_generator = get_version_generator(language=generate_version)
-        
+
         if version_generator == None:
             print(f'ERROR: Language "{generate_version}" is invalid or not handled yet')
         else:
             generate_version_file(base_dir, dependencies_filename, version_generator, recursive)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
