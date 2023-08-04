@@ -80,7 +80,7 @@ def main():
 
     if update:
         if not dependencies_file:
-            print("Error: you need to provides a JSON file")
+            print("Error: you need to provides a dependencies JSON file")
             return
         json_data = read_json(dependencies_file)
         subrepo_list = parse_subrepo_data(json_data)
