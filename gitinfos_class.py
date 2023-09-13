@@ -20,6 +20,6 @@ class GitInfos:
         status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout.split("\n")[0]
 
         if status == "":
-            self.local_changes = "false"
+            self.local_changes = False
         else:
-            self.local_changes = "true"
+            self.local_changes = True

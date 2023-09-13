@@ -1,3 +1,6 @@
+import builtins
+
+
 class C:
     # fmt: off
     FILENAME = "version.h"
@@ -18,7 +21,17 @@ class C:
     # fmt: on
 
     def generate_line(variable, value):
-        return f'#define {variable} "{value}"\n'
+        match type(value):
+            case builtins.str:
+                return f'#define {variable} "{value}"\n'
+            case builtins.bool:
+                if value == True:
+                    str_value = "true"
+                else:
+                    str_value = "false"
+                return f"#define {variable} {str_value}\n"
+            case _:
+                return f'#define {variable} "{value}"\n'
 
 
 class Python:
@@ -37,7 +50,13 @@ class Python:
     # fmt: on
 
     def generate_line(variable, value):
-        return f'    {variable} = "{value}"\n'
+        match type(value):
+            case builtins.str:
+                return f'    {variable} = "{value}"\n'
+            case builtins.bool:
+                return f"    {variable} = {value}\n"
+            case _:
+                return f'    {variable} = "{value}"\n'
 
 
 def get_version_generator(language):
