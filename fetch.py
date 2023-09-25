@@ -45,6 +45,10 @@ def fetch_list(base_dir, dir, subrepo_list, depth):
         result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
 
         if not result.stdout:
+            result = subprocess.run(["git", "fetch", "origin", "--prune", "--prune-tags"], capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f"[{bformat.ERRORMARK}] fetch origin {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}")
+                continue
             result = subprocess.run(["git", "checkout", f"{subrepo.revision}"], capture_output=True, text=True)
             if result.returncode != 0:
                 print(f"[{bformat.ERRORMARK}] checkout to {subrepo.revision} {bformat.ERROR}\n{result.stderr}{bformat.DEFAULT}")
