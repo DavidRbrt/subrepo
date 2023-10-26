@@ -15,7 +15,7 @@ class GitInfos:
         self.repo = subprocess.run(["git", "config", "--get", "remote.origin.url"], capture_output=True, text=True).stdout.split("\n")[0]
         self.hash = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.split("\n")[0]
         self.short_hash = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.split("\n")[0]
-        self.tag = subprocess.run(["git", "describe", "--tags"], capture_output=True, text=True).stdout.split("\n")[0]
+        self.tag = subprocess.run(["git", "tag", "--points-at", "HEAD"], capture_output=True, text=True).stdout.split("\n")[0]
 
         status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout.split("\n")[0]
 
